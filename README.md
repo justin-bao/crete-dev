@@ -38,5 +38,5 @@ If you need help with CRETE, or want to discuss the project, you can open new
 [maintainer](https://github.com/likebreath).
 
 We also have a very brief [user
-manual](https://github.com/SVL-PSU/crete-dev/blob/master/user_manual.md), which
+manual](https://github.com/justin-bao/crete-dev/blob/master/user_manual.md), which
 contains building instruction, running example, etc.
