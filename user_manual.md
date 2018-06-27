@@ -70,7 +70,7 @@ Grab a copy of the source tree:
 git clone --recursive https://github.com/SVL-PSU/crete-dev.git crete
 ```
 
-From outside of CRETE's top-level directory:
+From outside of the CRETE directory:
 ```bash
 mkdir crete-build
 cd crete-build
@@ -80,7 +80,7 @@ make # use -j to speedup
 
 ### 2.3 Misc Setup
 
-As documented on the STP and KLEE website, it is essential to setup the limit
+As documented on the STP and KLEE website, it is essential to set up the limit
 on open files and stack size. In most cases, the hard limit will have to be
 increased first, so it is best to directly edit the /etc/security/limits.conf
 file. For example, add the following lines to limits.config.
@@ -91,7 +91,7 @@ file. For example, add the following lines to limits.config.
 * hard nofile 65000
 ```
 
-If you like, you can add the executables and libraries to your .bashrc file:
+You can also add the executables and libraries to your .bashrc file:
 ```bash
 echo '# Added by CRETE' >> ~/.bashrc
 echo export PATH='$PATH':`readlink -f ./bin` >> ~/.bashrc
@@ -100,7 +100,7 @@ echo export LD_LIBRARY_PATH='$LD_LIBRARY_PATH':`readlink -f ./bin/boost` >> ~/.b
 source ~/.bashrc
 ```
 
-At this point, you're all set!
+At this point, you're all set with building CRETE!
 
 ## 3. Preparing the Guest Operating System
 >#### Note
@@ -114,9 +114,9 @@ At this point, you're all set!
 > Password: __crete__
 
 The front-end of CRETE is an instrumented VM (crete-qemu). You need
-to setup a QEMU-compatible VM image to performa a certain test upon
+to setup a QEMU-compatible VM image to perform a certain test upon
 CRETE. To get best performance, native qemu with kvm enabled is recommended for
-all setups on the guest VM image.
+all setups on the guest VM image. Native qemu can be attained by compiling the source code provided on on the qemu website.
 
 ### 3.1. Create a QEMU Image
 
@@ -134,8 +134,8 @@ details.
 ```bash
 $ crete-native-qemu-system-x86_64 -hda <img-name>.img -m <memory> -k en-us -enable-kvm -cdrom <iso-name>.iso -boot d
 ```
-Where &lt;memory&gt; is the amount of RAM (Megabytes), &lt;img-name&gt; is the
-name of the image, and &lt;iso-name&gt; is the name of the .iso. The iso of ubuntu-12.04.5-server-amd64, for
+Where &lt;memory&gt; is the amount of RAM in Megabytes, &lt;img-name&gt; is the
+name of the image just created, and &lt;iso-name&gt; is the name of the .iso used to install Ubuntu. The iso of ubuntu-12.04.5-server-amd64, for
 example, can be downloaded [here](http://releases.ubuntu.com/12.04/ubuntu-12.04.5-server-amd64.iso). From this
 point, follow the installation procedure to install the OS to the image.
 
@@ -155,20 +155,20 @@ Where &lt;memory&gt; is the amount of RAM (megabytes), &lt;img-name&gt; is the n
 
 >#### Note
 >
->If Booting Ubuntu 12.04 hangs, first boot to recovery mode, then resume to
+>If booting Ubuntu 12.04 hangs, first boot to recovery mode, then resume to
  normal boot. This is likely caused by driver display problems in Ubuntu.
 
 ### 3.4. Build CRETE Guest Utilities
-Install the following dependencies on the guest OS at first:
+Install the following dependencies on the guest OS:
 ```bash
 $ sudo apt-get update
 $ sudo apt-get install build-essential cmake libelf-dev libcap2-bin -y
 ```
 
-Compile CRETE utilties on the guest OS:
+Compile CRETE utilties on the guest OS. Ensure that the symbolic links within the _lib_ folder are retained during the copying process by using "scp -r" or "cp -Lr".
 
 ```bash
-$ scp -r <host-user-name>@10.0.2.2:</path/to/crete/guest> .
+$ scp -r <host-user-name>@10.0.2.2:</path/to/crete/front-end/guest> .
 $ mkdir guest-build
 $ cd guest-build
 $ cmake ../guest
@@ -205,11 +205,11 @@ Now, the guest OS is all set for using CRETE.
 >When QEMU is running, it provides a monitor console for interacting with
 QEMU. The monitor can be accessed from within QEMU by using the hotkey
 combinations _ctrl+alt+2_, while _ctrl+alt+1_ allows you to switch back to the
-Guest OS. One of the most useful functionality of the monitor is saving and
-loading shopshots.
+Guest OS. One of the most useful functionalities of the monitor is saving and
+loading snapshots.
 >
 >#### Save Snapshot
->Swith to monitor by pressing _ctrl+alt+2_ and use command:
+>Switch to monitor by pressing _ctrl+alt+2_ and use command:
 >```bash
 >$ savevm <snapshot-name>
 >```
@@ -220,9 +220,9 @@ loading shopshots.
 >```bash
 >$ crete-native-qemu-system-x86_64 -hda <img-name>.img -m <memory> -k en-us -loadvm <snapshot-name>
 >```
->Note that the boot command of QEMU that loads a snopshot has to stay consistant with
+>Note that the boot command of QEMU that loads a snapshot has to stay consistent with
 the boot command of QEMU while saving snopshot, such as using the same <memory>
-on the same image. Also, saving and loading snapshots cannot be done across
+on the same image. Also note that saving and loading snapshots cannot be done between
 non-kvm and kvm modes.
 >
 >#### File Transfer Between the Guest and Host OS
@@ -247,7 +247,7 @@ non-kvm and kvm modes.
 >Where &lt;enter&gt; means depress the _Enter_ key on your keyboard.
 >
 >#### Warning
->Try to aviod running more than one VM instance on a given image at a time, as
+>Try to avoid running more than one VM instance on a given image at a time, as
 it may cause image corruption.
 
 ## 4. Generating Test Cases for Linux Binaries
@@ -258,7 +258,7 @@ binary under test.
 
 ### 4.1 Setting-up the Test on the Guest OS
 #### Provide a configuration file for the target binary
-Boot the VM image using native qemu without kvm-enabled first by:
+Boot the VM image using native qemu without kvm-enabled first:
 ```bash
 $ crete-native-qemu-system-x86_64 -hda crete-demo.img -m 256 -k en-us
 ```
@@ -271,12 +271,12 @@ A sample configuration file, _crete.demo.echo.xml_, for _echo_ is given as follo
 	</args>
 </crete>
 ```
-A briefly explaination for each pertinent node is as follows (See _5. CRETE
-Configuration Optionts_ for more information):
+A brief explaination for each pertinent node is as follows (See _5. CRETE
+Configuration Options_ for more information):
 ```xml
 <exec>/bin/echo</exec>
 ```
-This is the path to the executable under test.
+This is the path to the executable under testing.
 ```xml
 <arg index="1" size="8" value="abc" concolic="true"/>
 ```
@@ -297,7 +297,7 @@ enter
 $ q
 enter
 ```
-From the host OS, luanch _crete-qeum_ by loading the snapshot we just saved:
+From the host OS, luanch _crete-qemu_ by loading the snapshot we just saved:
 ```bash
 $ crete-qemu-2.3-system-x86_64 -hda crete-demo.img -m 256 -k en-us -loadvm test
 ```
@@ -308,11 +308,11 @@ $ crete-run -c crete.demo.echo.xml
 ```
 
 Now, the guest OS is all set and should be waiting for CRETE back-end on the
-Host OS to start.
+host OS to start.
 
 ### 4.2 Executing CRETE Back-end on the Host OS
-CRETE back-end has three parts: _crete-vm-node_, for managing VM instances,
-_crete-svm-node_, for managing symbolic VM instances, and _crete-dispatch_, for
+CRETE back-end has three parts: _crete-vm-node_ for managing VM instances,
+_crete-svm-node_ for managing symbolic VM instances, and _crete-dispatch_ for
 coordinating the whole process.
 
 #### Start crete-dispatch on the Host OS:
