@@ -151,7 +151,7 @@ $ crete-native-qemu-system-x86_64 -hda <img-name>.img -m <memory> -k en-us -enab
 
 ```
 
-Where &lt;memory&gt; is the amount of RAM (megabytes), &lt;img-name&gt; is the name of the image.
+Where &lt;memory&gt; is the amount of RAM (Megabytes), &lt;img-name&gt; is the name of the image.
 
 >#### Note
 >
@@ -221,7 +221,7 @@ loading snapshots.
 >$ crete-native-qemu-system-x86_64 -hda <img-name>.img -m <memory> -k en-us -loadvm <snapshot-name>
 >```
 >Note that the boot command of QEMU that loads a snapshot has to stay consistent with
-the boot command of QEMU while saving snopshot, such as using the same <memory>
+the boot command of QEMU while saving snapshot, such as using the same <memory>
 on the same image. Also note that saving and loading snapshots cannot be done between
 non-kvm and kvm modes.
 >
