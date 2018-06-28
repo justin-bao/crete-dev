@@ -116,7 +116,7 @@ At this point, you're all set with building CRETE!
 The front-end of CRETE is an instrumented VM (crete-qemu). You need
 to setup a QEMU-compatible VM image to perform a certain test upon
 CRETE. To get best performance, native qemu with kvm enabled is recommended for
-all setups on the guest VM image. Native qemu can be attained by compiling the source code provided on on the qemu website.
+all setups on the guest VM image. Native qemu can be attained by compiling the source code provided on on the qemu website. In this user manual, native qemu commands will be signified with _native-qemu_ in place of _qemu_ to distinguish them from default qemu commands.
 
 ### 3.1. Create a QEMU Image
 
@@ -132,7 +132,7 @@ details.
 ### 3.2. Install the Guest OS
 
 ```bash
-$ crete-native-qemu-system-x86_64 -hda <img-name>.img -m <memory> -k en-us -enable-kvm -cdrom <iso-name>.iso -boot d
+$ native-qemu-system-x86_64 -hda <img-name>.img -m <memory> -k en-us -enable-kvm -cdrom <iso-name>.iso -boot d
 ```
 Where &lt;memory&gt; is the amount of RAM in Megabytes, &lt;img-name&gt; is the
 name of the image just created, and &lt;iso-name&gt; is the name of the .iso used to install Ubuntu. The iso of ubuntu-12.04.5-server-amd64, for
@@ -147,7 +147,7 @@ more boot options.
 Once the OS is installed to the image, it can be booted with:
 
 ```bash
-$ crete-native-qemu-system-x86_64 -hda <img-name>.img -m <memory> -k en-us -enable-kvm
+$ native-qemu-system-x86_64 -hda <img-name>.img -m <memory> -k en-us -enable-kvm
 
 ```
 
@@ -218,7 +218,7 @@ loading snapshots.
 >#### Load Snapshot
 >To load a snapshot while launching QEMU from the host OS:
 >```bash
->$ crete-native-qemu-system-x86_64 -hda <img-name>.img -m <memory> -k en-us -loadvm <snapshot-name>
+>$  native-qemu-system-x86_64 -hda <img-name>.img -m <memory> -k en-us -loadvm <snapshot-name>
 >```
 >Note that the boot command of QEMU that loads a snapshot has to stay consistent with
 the boot command of QEMU while saving snapshot, such as using the same <memory>
@@ -260,7 +260,7 @@ binary under test.
 #### Provide a configuration file for the target binary
 Boot the VM image using native qemu without kvm-enabled first:
 ```bash
-$ crete-native-qemu-system-x86_64 -hda crete-demo.img -m 256 -k en-us
+$ native-qemu-system-x86_64 -hda crete-demo.img -m 256 -k en-us
 ```
 A sample configuration file, _crete.demo.echo.xml_, for _echo_ is given as follows :
 ```xml
@@ -432,7 +432,7 @@ Item-by-item:
 ```
 Command line arguments to the executable are defined here.
 
-There is a single default argument for index="0", as defined by the system (typically a path to the executable). By listing an _arg_ element for _index="0"_, you will overwrite this default argument.
+There is a single default argument for _index="0"_, as defined by the system (typically a path to the executable). By listing an _arg_ element for _index="0"_, you will overwrite this default argument.
 
 #### crete.args.arg
 ```xml
@@ -453,7 +453,7 @@ size:
 value:
 - Type: string.
 - Description: the initial value of the argument (if concolic), or the constant
-value of the argument (if not concolicp).
+value of the argument (if not concolic).
 - Optional: yes, if _size_ is given.
 
 concolic:
