@@ -116,7 +116,9 @@ At this point, you're all set with building CRETE!
 The front-end of CRETE is an instrumented VM (crete-qemu). You need
 to setup a QEMU-compatible VM image to perform a certain test upon
 CRETE. To get best performance, native qemu with kvm enabled is recommended for
-all setups on the guest VM image. Native qemu can be attained by compiling the source code provided on on the qemu website. In this user manual, native qemu commands will be signified with _native-qemu_ in place of _qemu_ to distinguish them from default qemu commands.
+all setups on the guest VM image. 
+
+Native qemu can be attained by compiling the source code provided on on the qemu website. In this user manual, native qemu commands will be signified with _native-qemu_ in place of _qemu_ to distinguish them from default qemu commands.
 
 ### 3.1. Create a QEMU Image
 
@@ -297,7 +299,7 @@ enter
 $ q
 enter
 ```
-From the host OS, luanch _crete-qemu_ by loading the snapshot we just saved:
+From the host OS, launch _crete-qemu_ by loading the snapshot we just saved:
 ```bash
 $ crete-qemu-2.3-system-x86_64 -hda crete-demo.img -m 256 -k en-us -loadvm test
 ```
