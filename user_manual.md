@@ -115,7 +115,7 @@ At this point, you're all set with building CRETE!
 
 The front-end of CRETE is an instrumented VM (crete-qemu). You need
 to setup a QEMU-compatible VM image to perform a certain test upon
-CRETE. To get best performance, native qemu with kvm enabled is recommended for
+CRETE. To get the best performance, native qemu with kvm enabled should be used for
 all setups on the guest VM image. 
 
 Native qemu can be attained by compiling the source code provided on on the qemu website. In this user manual, native qemu commands will be signified with _native-qemu_ in place of _qemu_ to distinguish them from default qemu commands.
@@ -464,11 +464,76 @@ concolic:
 - Optional: yes - defaults to _false_.
 
 ### crete-dispatch configuration
-TBA
+
+```xml
+<crete>
+    <mode>string</mode>
+    <vm>
+        <arch>x64</arch>
+    </vm>
+    <svm>
+        <args>
+	    <symbolic>
+	        --search="<string>" --check-overshift="<bool>" --use-cex-cache --use-forked-solver --simplify-sym-indices --max-time="<double>" --max-instruction-time="<double>" --max-memory="<uint>"
+	    </symbolic>
+	</args>
+    </svm>
+    <test>
+	<interval>
+	    <trace>uint</trace>
+	</interval>
+    </test>
+</crete>
+```
+
 ### crete-vm-node configuration
-TBA
+
+```xml
+<crete>
+    <vm>
+        <path>
+            <x86>
+                string
+            </x86>
+            <x64>
+                string
+            </x64>
+        </path>
+        <count>1</count>
+    </vm>
+    <translator>
+        <path>
+            <x86>
+                string
+            </x86>
+            <x64>
+                string
+            </x64>
+        </path>
+    </translator>
+    <master>
+        <ip>localhost</ip>
+        <port>uint</port>
+    </master>
+</crete>
+```
+
 ### crete-svm-node configuration
-TBA
+
+```xml
+<crete>
+    <svm>
+        <path>
+            <symbolic>string</symbolic>
+        </path>
+        <count>1</count>
+    </svm>
+    <master>
+        <ip>localhost</ip>
+        <port>uint</port>
+    </master>
+</crete>
+```
 
 ## 6. FAQ
 
