@@ -254,15 +254,15 @@ it may cause image corruption.
 
 ## 4. Generating Test Cases for Linux Binaries
 This section will show how to use CRETE to generate test cases for unmodified Linux
-binaries. In this section, I will use "crete-demo.img" as the VM image
+binaries. In this section, I will use "crete.img" as the VM image
 prepared for CRETE. Also, I will use __echo__ from _GNU CoreUtils_ as the target
 binary under test.
 
 ### 4.1 Setting-up the Test on the Guest OS
 #### Provide a configuration file for the target binary
-Boot the VM image using native qemu without kvm-enabled first:
+Boot the VM image using qemu without kvm-enabled first:
 ```bash
-$ native-qemu-system-x86_64 -hda crete-demo.img -m 256 -k en-us
+$ qemu-system-x86_64 -hda crete.img -m 256 -k en-us
 ```
 A sample configuration file, _crete.demo.echo.xml_, for _echo_ is given as follows :
 ```xml
@@ -289,9 +289,9 @@ with size of 8 bytes and its initial value is "abc".
 With the configuration file, we are ready to use _crete-qemu_ to start the test
 on the target binary.
 
-We take advantage of the snapshot functionality of qemu to boost the process of
-booting the guest OS by using _crete-qemu_. We first save a snapshot and quit
-from the native qemu by:
+We can take advantage of the snapshot functionality of qemu to boost the process of
+booting the guest OS by using _crete-qemu_. First, save a snapshot and quit
+from QEMU:
 ```bash
 ctrl+alt+2
 $ savevm test
@@ -299,20 +299,143 @@ enter
 $ q
 enter
 ```
+
 From the host OS, launch _crete-qemu_ by loading the snapshot we just saved:
 ```bash
-$ crete-qemu-2.3-system-x86_64 -hda crete-demo.img -m 256 -k en-us -loadvm test
+$ crete-qemu-2.3-system-x86_64 -hda crete.img -m 256 -k en-us -loadvm test
 ```
+
+
+Currently, CRETE can be run in two modes:
+- Developer
+- Distributed
+
+Developer mode allows us to run CRETE on __one__ specific program
+
+Distributed mode allows us run CRETE on __multiple__ programs 
+
+*note* While running CRETE in distributed mode, the image will be booted up by the _vm-node_. When you run "crete-vm-node -c crete.vm-node.xml", the _vm-node_ will boot the image. **While running CRETE in developer mode, QEMU will exit after running CRETE. On the other hand, distributed will restart qemu everytime it is finished running tests. 
+
+If you want to run __Developer__ mode, please skip to section __4.3__. Else, proceed to run CRETE in __Distributed__ mode
+
+### 4.2 Running CRETE in Distributed Mode
+
+
+>#### General flow of setup for Distributed mode
+>1. Make sure the image you created is found under vm-node/vm/1/ (vm-node/vm/1/crete.img)
+>2. Boot the VM image using QEMU without kvm-enabled and sample configuration file to be tested. (crete.demo.echo.xml)
+>3. Save the snapshot of the VM image as 'test'
+>4. Using crete-qemu, boot the image with the snapshot. *Do not add option '-enable-kvm'. This will disable crete functionality because crete does not support KVM*
+>5. Run crete-run and take a snapshot as the image begins waiting for a port 
+```[CRETE] Waiting for port... ```
+>6. Save the snapshot fo the VM image as 'test'
+>7. Now you are ready to run ```crete-dispatch -c crete.dispatch.xml```, ```crete-vm-node -c crete.vm-node.xml``` (Run this command within vm-node folder), and ```crete-svm-node -c crete.svm-node.xml``` in seperate terminal windows
+
+#### 4.2.1 Image location
+Please make sure the image you created is under crete/image_template/vm-node/vm/1/. The path should look like this:
+```xml 
+crete/image_template/vm-node/vm/1/crete.img 
+```
+
+#### 4.2.2 Initiating CRETE and saving snapshot 
+__SKIP THIS SECTION IF YOU HAVE PULLED THE CRETE DOCKER IMAGE__
+
+On your guestOS, run 'crete-run' without any arguments:
+
+```bash
+$ crete-run
+```
+
+You should see:
+```xml 
+[CRETE] Waiting for port...
+```
+
+This indicates you have run it successfully and proceed to the next step.
+
+Save the snapshot under 'test' again.
+
+```bash
+ctrl+alt+2
+$ savevm test
+enter
+$ q
+enter
+```
+#### 4.2.3 Running crete-dispatch
+In a separate terminal window on the hostOS, locate crete.dispatch.xml. It should be found under:
+```xml 
+/home/crete/image_template/crete.dispatch.xml
+```
+
+Make sure the path node in crete.dispatch.xml:
+```xml 
+<path>/home/crete/image_template/vm_node/vm/1/crete.img</path>
+```
+matches the path to your crete.img
+
+Run 
+```bash
+crete-dispatch -c crete.dispatch.xml 
+```
+
+You should see:
+```xml 
+[CRETE] Awaiting connection on 'symdrive-svl.cs.pdx.edu' on port '10012' ...
+This indicates you ran _crete-dispatch_ successfully and can now run _crete-vm-node_.
+```
+
+#### 4.2.4 Running crete-vm-node
+In a separate terminal window on the hostOS, locate crete.vm-node.xml. It should be found under:
+```xml 
+/home/crete/image_template/vm-node/crete.vm-node.xml 
+```
+
+Run 
+```bash
+crete-vm-node -c crete.vm-node.xml 
+```
+You should see:
+```xml 
+[CRETE] Connecting to master 'localhost' on port '10012' ...
+// some more information about vm-node test running
+```
+This indicates you ran _crete-vm-node_ successfully and can now run _crete-svm-node_.
+
+#### 4.2.5 Running crete-svm-node
+In a separate terminal window on the hostOS, locate crete.svm-node.xml. It should be found under:
+```xml
+/home/crete/image_template/crete.svm-node.xml
+```
+Make sure the path node matches the path to your crete-klee-1.4.0
+```xml
+<path>
+		<symbolic>/home/crete-build/bin/crete-klee-1.4.0</symbolic>
+</path>
+```
+Run
+```bash
+crete-svm-node -c crete.svm-node.xml 
+```
+
+You should see:
+```xml 
+[CRETE] Connecting to master 'localhost' on port '10012' ...
+// some more information about vm-node tests running
+```
+
+__Success! You've now run CRETE in Distributed Mode__
+
+
+### 4.3 Executing CRETE Front-end on Guest OS and Back-end on the Host OS (Developer mode)
 
 On the guest OS, execute CRETE guest utility with the guest configuration file:
 ```bash
 $ crete-run -c crete.demo.echo.xml
 ```
-
 Now, the guest OS is all set and should be waiting for CRETE back-end on the
 host OS to start.
 
-### 4.2 Executing CRETE Back-end on the Host OS
 CRETE back-end has three parts: _crete-vm-node_ for managing VM instances,
 _crete-svm-node_ for managing symbolic VM instances, and _crete-dispatch_ for
 coordinating the whole process.
@@ -354,6 +477,8 @@ A sample configuration file, _crete.dispatch.xml_, for _crete-dispatch_ is:
 Start _crete-dispatch_ with the sample configuration file:
 ```bash
 $ crete-dispatch -c crete.dispatch.xml
+
+*More information about the markup can be found in section 5
 ```
 #### Start crete-vm-node on the Host OS:
 A sample configuration file, _crete.vm-node.xml_, for _crete-vm-node_ is:
@@ -378,6 +503,9 @@ A sample configuration file, _crete.svm-node.xml_, for _crete-svm-node_ is:
 ```xml
 <crete>
     <svm>
+        <path>
+               <symbolic>/path-to-crete-build/bin/crete-klee-1.4.0</symbolic>
+        </path>
         <count>1</count>
     </svm>
     <master>
@@ -391,7 +519,7 @@ Start _crete-svm-node_ with the sample configuration file:
 $ crete-svm-node -c crete.svm-node.xml
 ```
 
-### 4.3 Collecting Result on the Host OS
+### 4.4 Collecting Results on the Host OS
 TBA
 
 ## 5. Configuration Options
@@ -465,25 +593,172 @@ concolic:
 
 ### crete-dispatch configuration
 
+As mentioned earlier, CRETE can be ran in two modes:
+- Developer
+- Distributed
+
+Below is a listing of the .xml files for both, respectively.
+
 ```xml
 <crete>
-    <mode>string</mode>
+    <mode>developer</mode>
     <vm>
         <arch>x64</arch>
     </vm>
     <svm>
         <args>
-	    <symbolic>
-	        --search="<string>" --check-overshift="<bool>" --use-cex-cache --use-forked-solver --simplify-sym-indices --max-time="<double>" --max-instruction-time="<double>" --max-memory="<uint>"
-	    </symbolic>
-	</args>
+            <symbolic>
+                --max-memory=1000
+                --disable-inlining
+                --use-forked-solver
+                --max-sym-array-size=4096
+                --max-instruction-time=5
+                --max-time=150
+                --randomize-fork=false
+                --search=dfs
+            </symbolic>
+        </args>
     </svm>
     <test>
-	<interval>
-	    <trace>uint</trace>
-	</interval>
+        <interval>
+            <trace>10000</trace>
+            <tc>10000</tc>
+            <time>900</time>
+        </interval>
     </test>
+    <profile>
+        <interval>10</interval>
+    </profile>
 </crete>
+```
+
+A brief explaination of each pertinent node is as follows:
+
+Set the mode to developer
+
+```xml
+<mode>developer</mode>
+```
+
+Describes the architecture of the guestOS's machine
+
+```xml
+<vm>
+        <arch>x64</arch>
+</vm>
+```
+
+Desribes the symbolic arguments the user want to use.
+
+```xml
+<svm>
+	<args>
+		<symbolic>
+		...
+		...
+		...
+		</symbolic>
+	</args>
+</svm>
+```
+
+This section describes how many tests to run and how long to wait to terminate main task
+
+- trace: number of tests to run before stopping
+- time: Time to wait before stopping automatically (in seconds).
+
+```xml
+<test>
+        <interval>
+            <trace>10000</trace>
+            <tc>10000</tc>
+            <time>900</time>
+        </interval>
+</test>
+```
+
+### Running Distributed Mode
+
+There will be some minor differences in the markup
+
+```xml
+<crete>
+    <mode>distributed</mode>
+    <vm>
+      <image>
+        <path>/home/crete/image_template/vm-node/vm/1/crete.img</path>
+        <update>false</update>
+      </image>
+      <arch>x64</arch>
+      <snapshot>test</snapshot>
+      <args>-m 256</args>
+    </vm>
+    <svm>
+        <args>
+            <symbolic>
+                --max-memory=1000
+                --disable-inlining
+                --use-forked-solver
+                --max-sym-array-size=4096
+                --max-instruction-time=5
+                --max-time=150
+                --search=dfs
+            </symbolic>
+        </args>
+    </svm>
+    <test>
+        <interval>
+            <trace>10000</trace>
+            <tc>10000</tc>
+            <time>900</time>
+            <items>
+              <item>/home/crete/crete.demo.echo.xml</item>
+            </items>
+        </interval>
+    </test>
+    <profile>
+        <interval>10</interval>
+    </profile>
+</crete>
+```
+
+We need to specify the path to our image. Our image will be specifically found in 
+```xml
+/home/crete/image_template/vm-node/vm/1/crete.img
+```
+
+```xml
+
+<image>
+        <path>nhaison-creteimg/img_template/vm-node/vm/1/crete.img</path>
+        <update>false</update>
+</image>
+```
+
+Then, we need to enter the name of the snapshot we saved earlier:
+
+```xml
+<snapshot>test</snapshot>
+```
+
+We removed the option to randomize the fork under symbolic arguments
+We removed: --randomize-fork=false
+
+We now include the programs (items) we want to run tests on
+
+```xml
+<items>
+              <item>/home/crete/crete.demo.echo.xml</item>
+</items>
+```
+
+If we were to run multiple tests then we would have multiple items under the items tag
+```xml
+<items>
+	<item>/home/crete/crete.demo.echo.xml</item>
+	<item>/path-to-item2/</item>
+	<item>/path-to-item3/</item>
+</items>
 ```
 
 ### crete-vm-node configuration
