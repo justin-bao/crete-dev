@@ -314,7 +314,7 @@ Developer mode allows us to run CRETE on __one__ specific program
 
 Distributed mode allows us run CRETE on __multiple__ programs 
 
-*note* While running CRETE in distributed mode, the image will be booted up by the _vm-node_. When you run "crete-vm-node -c crete.vm-node.xml", the _vm-node_ will boot the image. **While running CRETE in developer mode, QEMU will exit after running CRETE. On the other hand, distributed will restart qemu everytime it is finished running tests. 
+*note* While running CRETE in distributed mode, the image will be booted up by the _vm-node_. When you run ```crete-vm-node -c crete.vm-node.xml```, the _vm-node_ will boot the image. **While running CRETE in Developer mode, QEMU will exit after running CRETE. On the other hand, Distributed mode will restart QEMU every time it is finished running tests. 
 
 If you want to run __Developer__ mode, please skip to section __4.3__. Else, proceed to run CRETE in __Distributed__ mode
 
