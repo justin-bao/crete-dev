@@ -35,7 +35,50 @@ have been tested.
 
 ## 2. Building CRETE
 
-### 2.1 Dependencies
+You can build CRETE Distributed using Docker or manually from source code. For manual installation, please skip this section.
+
+### 2.1 Building CRETE with Docker
+
+The version of Docker used to test CRETE compatibility is Docker version 18.03.1-ce
+
+#### Pulling from Docker hub
+
+To pull down the latest build of a particular Docker image, run:
+
+```bash
+docker pull nhaison/crete
+```
+
+Note that this process pulls images containing code compiled by a third-party service. We do not accept responsibility for the contents of the image.
+
+#### Creating a CRETE Docker container
+
+Now that you have a CRETE Docker image you can try creating a container from the image.
+
+```bash
+docker run --rm -ti --ulimit='stack=-1:-1' nhaison/crete
+```
+
+Note that the ```--ulimit``` option sets an unlimited stack size inside the container. This is to avoid stack overflow issues when running CRETE.
+
+If this worked correctly, your shell prompt will have changed and you will be the root user.
+
+```bash
+root@d62a2428405d:/home# whoami
+root
+root@d62a2428405d:/home# 
+```
+
+Now exit the container
+
+```bash
+root@d62a2428405d:/home# exit
+```
+
+Skip to section 4.2.3 for further instructions in running CRETE in Distributed mode.
+
+
+### 2.2 Dependencies
 
 The following apt-get packages are required:
 ```bash
@@ -56,7 +99,7 @@ sudo apt-get update
 sudo apt-get install clang-3.4 llvm-3.4 llvm-3.4-dev llvm-3.4-tools
 ```
 
-### 2.2 Building
+### 2.3 Building
 >#### Warning
 >
 > CRETE uses Boost 1.59.0. If any other version of Boost is installed on the system, there may be conflicts. It is recommended that you remove any conflicting Boost versions.
@@ -78,7 +121,7 @@ CXX=clang++-3.4 cmake ../crete
 make # use -j to speedup
 ```
 
-### 2.3 Misc Setup
+### 2.4 Misc Setup
 
 As documented on the STP and KLEE website, it is essential to set up the limit
 on open files and stack size. In most cases, the hard limit will have to be
