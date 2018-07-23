@@ -410,9 +410,9 @@ enter
 While running the CRETE container, you can access the container in a different terminal window by running the following:
 
 ```bash
-docker exec -it <container id> bash
+docker exec -it <container_id> bash
 ```
-where _<container id>_ is the ID for the CRETE container.
+where ```<container_id>``` is the ID for the CRETE container.
 
 In a separate terminal window in the container, locate crete.dispatch.xml. It should be found under:
 ```xml 
