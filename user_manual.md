@@ -41,7 +41,7 @@ You can build CRETE Distributed using Docker or manually from source code. For m
 
 The version of Docker used to test CRETE compatibility is Docker version 18.03.1-ce
 
-#### Pulling from Docker hub
+#### Pulling from Docker Hub
 
 To pull down the latest build of a particular Docker image, run:
 
@@ -405,8 +405,16 @@ enter
 $ q
 enter
 ```
+
 #### 4.2.3 Running crete-dispatch
-In a separate terminal window on the hostOS, locate crete.dispatch.xml. It should be found under:
+While running the CRETE container, you can access the container in a different terminal window by running the following:
+
+```bash
+docker exec -it <container id> bash
+```
+where <container id> is the ID for the CRETE container.
+
+In a separate terminal window in the container, locate crete.dispatch.xml. It should be found under:
 ```xml 
 /home/crete/image_template/crete.dispatch.xml
 ```
@@ -429,7 +437,7 @@ You should see:
 This indicates you ran _crete-dispatch_ successfully and can now run _crete-vm-node_.
 
 #### 4.2.4 Running crete-vm-node
-In a separate terminal window on the hostOS, locate crete.vm-node.xml. It should be found under:
+In a separate terminal window in the container, locate crete.vm-node.xml. It should be found under:
 ```xml 
 /home/crete/image_template/vm-node/crete.vm-node.xml 
 ```
@@ -446,7 +454,7 @@ You should see:
 This indicates you ran _crete-vm-node_ successfully and can now run _crete-svm-node_.
 
 #### 4.2.5 Running crete-svm-node
-In a separate terminal window on the hostOS, locate crete.svm-node.xml. It should be found under:
+In a separate terminal window in the container, locate crete.svm-node.xml. It should be found under:
 ```xml
 /home/crete/image_template/crete.svm-node.xml
 ```
