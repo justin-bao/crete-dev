@@ -351,7 +351,7 @@ You should see:
 [CRETE] Waiting for port...
 ```
 
-This indicates you have run it successfully and proceed to the next step.
+This indicates you have run _crete-run_ successfully and can proceed.
 
 Save the snapshot under 'test' again.
 
@@ -382,8 +382,8 @@ crete-dispatch -c crete.dispatch.xml
 You should see:
 ```xml 
 [CRETE] Awaiting connection on 'symdrive-svl.cs.pdx.edu' on port '10012' ...
-This indicates you ran _crete-dispatch_ successfully and can now run _crete-vm-node_.
 ```
+This indicates you ran _crete-dispatch_ successfully and can now run _crete-vm-node_.
 
 #### 4.2.4 Running crete-vm-node
 In a separate terminal window on the hostOS, locate crete.vm-node.xml. It should be found under:
