@@ -3,6 +3,42 @@
 
 [![Build Status](https://travis-ci.org/SVL-PSU/crete-dev.svg?branch=master)](https://travis-ci.org/SVL-PSU/crete-dev)
 
+# Table of Contents
+
+* [Prerequisites](#prerequisites)
+	* [Terminology](#terminology)
+	* [Unix/Linux Knowledge](#unix/linux-knowledge)
+	* [Operating System](#operating-system)
+* [Building CRETE](#building-crete)
+	* [Building CRETE with Docker](#building-crete-with-docker)
+		* [Install Docker](#install-docker)
+		* [Creating a CRETE Docker container](#creating-a-crete-docker-container)
+	* [Building CRETE locally](#building-crete-locally)
+		* [Dependencies](#dependencies)
+		* [Building](#building)
+		* [Miscellaneous Setup](#miscellaneous-setup)
+* [Preparing the Guest Operating System](#preparing-the-guest-operating-system)
+	* [Create a QEMU Image](#create-a-qemu-image)
+	* [Install the Guest OS](#install-the-guest-os)
+	* [Boot the OS](#boot-the-os)
+	* [Build CRETE Guest Utilities](#build-crete-guest-utilities)
+	* [Other Guest OS Configurations](#other-guest-os-configurations)
+* [Generating Test Cases for Linux Binaries](#generating-test-cases-for-linux-binaries)
+	* [Setting Up the Test on the Guest OS](#setting-up-the-test-on-the-guest-os)
+	* [Running CRETE in Distributed Mode](#running-crete-in-distributed-mode)
+		* [Initiating CRETE and saving snapshot](#initiating-crete-and-saving-snapshot)
+		* [Running crete-dispatch](#running-crete-dispatch)
+		* [Running crete-vm-node](#running-crete-vm-node)
+		* [Running crete-svm-node](#running-crete-svm-node)
+	* [Executing CRETE Front-end on Guest OS and Back-end on the Host OS (Developer mode)](#executing-crete-front-end-on-guest-os-and-back-end-on-the-host-os-developer-mode)
+		* [Running crete-dispatch](#running-crete-dispatch)
+		* [Running crete-vm-node](#running-crete-vm-node)
+		* [Running crete-svm-node](#running-crete-svm-node)
+	* [Collecting Results on the Host OS](#collecting-results-on-the-host-os)
+* [Configuration Options](#configuration-options)
+	* [Running Distributed Mode](#running-distributed-mode)
+* [FAQ](#faq)
+
 ## 1. Prerequisites
 ### 1.1. Terminology
 Virtual Machine (VM)
@@ -82,10 +118,22 @@ Now exit the container
 root@d62a2428405d:/home# exit
 ```
 
+Now enter the existing container
+```bash
+docker start -ai crete
+```
+
+The container can be accessed through any terminal window:
+```bash
+docker exec -it crete bash
+```
+
 __Skip to section 4.2.3 for further instructions in running CRETE in Distributed mode. The rest of the manual until then details how to build CRETE on the host OS.__
 
 
-### 2.2 Dependencies
+### 2.2 Building CRETE locally
+
+#### Dependencies
 
 The following apt-get packages are required:
 ```bash
@@ -106,7 +154,7 @@ sudo apt-get update
 sudo apt-get install clang-3.4 llvm-3.4 llvm-3.4-dev llvm-3.4-tools
 ```
 
-### 2.3 Building
+#### Building
 >#### Warning
 >
 > CRETE uses Boost 1.59.0. If any other version of Boost is installed on the system, there may be conflicts. It is recommended that you remove any conflicting Boost versions.
@@ -128,7 +176,7 @@ CXX=clang++-3.4 cmake ../crete
 make # use -j to speedup
 ```
 
-### 2.4 Misc Setup
+#### Miscellaneous Setup
 
 As documented on the STP and KLEE website, it is essential to set up the limit
 on open files and stack size. In most cases, the hard limit will have to be
@@ -308,7 +356,7 @@ binaries. This manual will use "crete.img" as the VM image
 prepared for CRETE. to utilize __echo__ from _GNU CoreUtils_ as the target
 binary under test.
 
-### 4.1 Setting-up the Test on the Guest OS
+### 4.1 Setting Up the Test on the Guest OS
 #### Provide a configuration file for the target binary
 First, boot the VM image using QEMU without kvm-enabled:
 ```bash
@@ -364,7 +412,9 @@ Developer mode allows us to run CRETE on __one__ specific program.
 
 Distributed mode allows us run CRETE on __multiple__ programs. 
 
-*note* While running CRETE in distributed mode, the image will be booted up by the _vm-node_. When you run ```crete-vm-node -c crete.vm-node.xml```, the _vm-node_ will boot the image. **While running CRETE in Developer mode, QEMU will exit after running CRETE. On the other hand, Distributed mode will restart QEMU every time it is finished running tests. 
+While running CRETE in distributed mode, the image will be booted up by the _vm-node_. When you run ```crete-vm-node -c crete.vm-node.xml```, the _vm-node_ will boot the image. 
+
+While running CRETE in Developer mode, QEMU will exit after running CRETE. On the other hand, Distributed mode will restart QEMU every time it is finished running tests. 
 
 To run CRETE in __Distributed__ mode, follow the steps in section __4.2__ below. If you want to run __Developer__ mode, skip to section __4.3__.
 
@@ -382,9 +432,9 @@ To run CRETE in __Distributed__ mode, follow the steps in section __4.2__ below.
 >7. Now you are ready to run ```crete-dispatch -c crete.dispatch.xml```, ```crete-vm-node -c crete.vm-node.xml``` (Run this command within vm-node folder), and ```crete-svm-node -c crete.svm-node.xml``` in seperate terminal windows
 
 #### 4.2.1 Image location
-Make sure the image you created is under ```crete/crete-dev/image_template/vm-node/vm/1/```. The path should look like this:
+Make sure the image you created is under the correct directory. The path should look like this:
 ```xml 
-crete/image_template/vm-node/vm/1/crete.img 
+crete/crete-dev/image_template/vm-node/vm/1/crete.img 
 ```
 
 #### 4.2.2 Initiating CRETE and saving snapshot 
@@ -414,13 +464,6 @@ enter
 ```
 
 #### 4.2.3 Running crete-dispatch
-While running the CRETE container, you can access the container in a different terminal window by running the following:
-
-```bash
-docker exec -it <container_id> bash
-```
-where ```<container_id>``` is the ID for the CRETE container.
-
 In a separate terminal window in the container, locate crete.dispatch.xml. It should be found under:
 ```xml 
 /home/crete/image_template/crete.dispatch.xml
@@ -499,11 +542,11 @@ $ crete-run -c crete.demo.echo.xml
 Now, the guest OS is all set and should be waiting for CRETE back-end on the
 host OS to start.
 
-CRETE back-end has three parts: _crete-vm-node_ for managing VM instances,
+CRETE back-end has three parts to be run on the host OS: _crete-vm-node_ for managing VM instances,
 _crete-svm-node_ for managing symbolic VM instances, and _crete-dispatch_ for
 coordinating the whole process.
 
-#### Start crete-dispatch on the Host OS:
+#### Running crete-dispatch
 A sample configuration file, _crete.dispatch.xml_, for _crete-dispatch_ is:
 ```xml
 <crete>
@@ -543,7 +586,7 @@ $ crete-dispatch -c crete.dispatch.xml
 ```
 *More information about the markup can be found in section 5
 
-#### Start crete-vm-node on the Host OS:
+#### Running crete-vm-node
 A sample configuration file, _crete.vm-node.xml_, for _crete-vm-node_ is:
 ```xml
 <crete>
@@ -561,7 +604,7 @@ be started from the same folder where the _crete-qemu_ was started):
 ```bash
 $ crete-vm-node -c crete.vm-node.xml
 ```
-#### Start crete-svm-node on the Host OS:
+#### Running crete-svm-node
 A sample configuration file, _crete.svm-node.xml_, for _crete-svm-node_ is:
 ```xml
 <crete>
