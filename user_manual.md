@@ -30,7 +30,7 @@
 		* [Running crete-dispatch](#running-crete-dispatch)
 		* [Running crete-vm-node](#running-crete-vm-node)
 		* [Running crete-svm-node](#running-crete-svm-node)
-	* [Running CRETE in Developer Mode)](#executing-crete-front-end-on-guest-os-and-back-end-on-the-host-os-developer-mode)
+	* [Running CRETE in Developer Mode](#executing-crete-front-end-on-guest-os-and-back-end-on-the-host-os-developer-mode)
 		* [Running crete-dispatch](#running-crete-dispatch)
 		* [Running crete-vm-node](#running-crete-vm-node)
 		* [Running crete-svm-node](#running-crete-svm-node)
