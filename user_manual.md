@@ -82,7 +82,7 @@ Now exit the container
 root@d62a2428405d:/home# exit
 ```
 
-__Skip to section 4.2.3 for further instructions in running CRETE in Distributed mode. The rest of the manual until then details building CRETE on the host.__
+__Skip to section 4.2.3 for further instructions in running CRETE in Distributed mode. The rest of the manual until then details how to build CRETE on the host OS.__
 
 
 ### 2.2 Dependencies
@@ -165,7 +165,7 @@ At this point, you're all set with building CRETE!
 
 The front-end of CRETE is an instrumented VM (crete-qemu). You need
 to setup a QEMU-compatible VM image to perform a certain test upon
-CRETE. To get the best performance, native qemu with kvm enabled should be used for
+CRETE. To get the best performance, native QEMU with kvm enabled should be used for
 all setups on the guest VM image. 
 
 Native qemu can be attained by compiling the source code provided on on the qemu website. In this user manual, native qemu commands will be signified with _native-qemu_ in place of _qemu_ to distinguish them from default qemu commands.
@@ -238,7 +238,7 @@ echo '# Disabling ASLR:' | sudo tee --append /etc/sysctl.conf
 echo 'kernel.randomize_va_space = 0' | sudo tee --append /etc/sysctl.conf
 ```
 
-Set the following enviroment variables for using crete guest utilities (the
+Set the following enviroment variables for using CRETE guest utilities (the
 following script works on ubuntu 12.04 and assumes the "guest-build" locates
 at the home folder):
 ```bash
@@ -304,13 +304,13 @@ it may cause image corruption.
 
 ## 4. Generating Test Cases for Linux Binaries
 This section will show how to use CRETE to generate test cases for unmodified Linux
-binaries. In this section, I will use "crete.img" as the VM image
-prepared for CRETE. Also, I will use __echo__ from _GNU CoreUtils_ as the target
+binaries. This manual will use "crete.img" as the VM image
+prepared for CRETE. to utilize __echo__ from _GNU CoreUtils_ as the target
 binary under test.
 
 ### 4.1 Setting-up the Test on the Guest OS
 #### Provide a configuration file for the target binary
-Boot the VM image using qemu without kvm-enabled first:
+First, boot the VM image using QEMU without kvm-enabled:
 ```bash
 $ qemu-system-x86_64 -hda crete.img -m 256 -k en-us
 ```
@@ -339,7 +339,7 @@ with size of 8 bytes and its initial value is "abc".
 With the configuration file, we are ready to use _crete-qemu_ to start the test
 on the target binary.
 
-We can take advantage of the snapshot functionality of qemu to boost the process of
+We can take advantage of the snapshot functionality of QEMU to boost the process of
 booting the guest OS by using _crete-qemu_. First, save a snapshot and quit
 from QEMU:
 ```bash
@@ -360,9 +360,9 @@ Currently, CRETE can be run in two modes:
 - Developer
 - Distributed
 
-Developer mode allows us to run CRETE on __one__ specific program
+Developer mode allows us to run CRETE on __one__ specific program.
 
-Distributed mode allows us run CRETE on __multiple__ programs 
+Distributed mode allows us run CRETE on __multiple__ programs. 
 
 *note* While running CRETE in distributed mode, the image will be booted up by the _vm-node_. When you run ```crete-vm-node -c crete.vm-node.xml```, the _vm-node_ will boot the image. **While running CRETE in Developer mode, QEMU will exit after running CRETE. On the other hand, Distributed mode will restart QEMU every time it is finished running tests. 
 
@@ -382,7 +382,7 @@ To run CRETE in __Distributed__ mode, follow the steps in section __4.2__ below.
 >7. Now you are ready to run ```crete-dispatch -c crete.dispatch.xml```, ```crete-vm-node -c crete.vm-node.xml``` (Run this command within vm-node folder), and ```crete-svm-node -c crete.svm-node.xml``` in seperate terminal windows
 
 #### 4.2.1 Image location
-Make sure the image you created is under crete/crete-dev/image_template/vm-node/vm/1/. The path should look like this:
+Make sure the image you created is under ```crete/crete-dev/image_template/vm-node/vm/1/```. The path should look like this:
 ```xml 
 crete/image_template/vm-node/vm/1/crete.img 
 ```
@@ -390,7 +390,7 @@ crete/image_template/vm-node/vm/1/crete.img
 #### 4.2.2 Initiating CRETE and saving snapshot 
 __SKIP THIS SECTION IF YOU ARE INSTEAD USING THE CRETE DOCKER IMAGE__
 
-On your guestOS, run 'crete-run' without any arguments:
+On your guest OS, run 'crete-run' without any arguments:
 
 ```bash
 $ crete-run
@@ -402,7 +402,7 @@ You should see:
 ```
 
 This indicates you have run _crete-run_ successfully and can proceed.
-
+.
 Save the snapshot under 'test' again.
 
 ```bash
@@ -540,9 +540,9 @@ A sample configuration file, _crete.dispatch.xml_, for _crete-dispatch_ is:
 Start _crete-dispatch_ with the sample configuration file:
 ```bash
 $ crete-dispatch -c crete.dispatch.xml
-
-*More information about the markup can be found in section 5
 ```
+*More information about the markup can be found in section 5
+
 #### Start crete-vm-node on the Host OS:
 A sample configuration file, _crete.vm-node.xml_, for _crete-vm-node_ is:
 ```xml
@@ -703,7 +703,7 @@ Set the mode to developer
 <mode>developer</mode>
 ```
 
-Describes the architecture of the guestOS's machine
+Describes the architecture of the guest OS's machine
 
 ```xml
 <vm>
@@ -885,7 +885,7 @@ time.
 
 ### 6.2. Why I can't switch to QEMU monitor by using ctrl+alt+2?
 A solution for this is forwarding the monitor to a local port through
-telnet while launching qemu on the host OS:
+telnet while launching QEMU on the host OS:
 ```bash
 $ crete-qemu-2.3-system-x86_64 -hda crete-demo.img -m 256 -k en-us -loadvm test -monitor telnet:127.0.0.1:1234,server,nowait
 ```
