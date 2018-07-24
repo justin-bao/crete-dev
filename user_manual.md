@@ -156,16 +156,22 @@ sudo apt-get install clang-3.4 llvm-3.4 llvm-3.4-dev llvm-3.4-tools
 > CRETE requires a C++11 compatible compiler.
 > We recommend clang++-3.4 or g++-4.9 or higher versions of these compilers.
 
-Grab a copy of the source tree:
+First, create the overall CRETE directory:
 ```bash
-git clone --recursive https://github.com/SVL-PSU/crete-dev.git crete
+mkdir crete
+cd crete
 ```
 
-From outside of the CRETE directory:
+Grab a copy of the source tree:
+```bash
+git clone --recursive https://github.com/SVL-PSU/crete-dev.git crete-dev
+```
+
+From outside of the ```crete-dev``` directory in the overall CRETE directory:
 ```bash
 mkdir crete-build
 cd crete-build
-CXX=clang++-3.4 cmake ../crete
+CXX=clang++-3.4 cmake ../crete-dev
 make # use -j to speedup
 ```
 
