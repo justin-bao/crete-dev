@@ -30,7 +30,7 @@
 		* [Running crete-dispatch](#running-crete-dispatch)
 		* [Running crete-vm-node](#running-crete-vm-node)
 		* [Running crete-svm-node](#running-crete-svm-node)
-	* [Executing CRETE Front-end on Guest OS and Back-end on the Host OS (Developer mode)](#executing-crete-front-end-on-guest-os-and-back-end-on-the-host-os-developer-mode)
+	* [Running CRETE in Developer Mode)](#executing-crete-front-end-on-guest-os-and-back-end-on-the-host-os-developer-mode)
 		* [Running crete-dispatch](#running-crete-dispatch)
 		* [Running crete-vm-node](#running-crete-vm-node)
 		* [Running crete-svm-node](#running-crete-svm-node)
@@ -533,7 +533,7 @@ entering: Start
 __You've successfully run CRETE in Distributed Mode!__
 
 
-### 4.3 Executing CRETE Front-end on Guest OS and Back-end on the Host OS (Developer mode)
+### 4.3 Executing CRETE Front-end on Guest OS and Back-end on the Host OS (Developer Mode)
 
 On the guest OS, execute CRETE guest utility with the guest configuration file:
 ```bash
