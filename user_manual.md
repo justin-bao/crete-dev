@@ -35,7 +35,10 @@
 		* [Running crete-svm-node](#running-crete-svm-node)
 	* [Collecting Results on the Host OS](#44-collecting-results-on-the-host-os)
 * [Configuration Options](#5-configuration-options)
-	* [Running Distributed Mode](#running-distributed-mode)
+	* [General Configuration](#general-configuration)
+	* [crete-dispatch Configuration](#crete-dispatch-configuration)
+	* [crete-vm-node Configuration](#crete-vm-node-configuration)
+	* [crete-svm-node Configuration](#crete-svm-node-configuration)
 * [FAQ](#6-faq)
 
 ## 1. Prerequisites
@@ -648,7 +651,7 @@ TBA
 
 ## 5. Configuration Options
 
-### Main Configuration
+### General Configuration
 
 Configuration is done within the guest OS via an XML file that is passed as an argument to _crete-run_.
 
