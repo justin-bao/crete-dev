@@ -95,10 +95,10 @@ Note that this process pulls images containing code compiled by a third-party se
 
 #### Creating a CRETE Docker container
 
-Now that you have a CRETE Docker image you can try creating a container from the image.
+Now that you have a CRETE Docker image you can try creating a container named crete from the image.
 
 ```bash
-docker run --rm -ti --ulimit='stack=-1:-1' nhaison/crete
+docker run --name crete -ti --ulimit='stack=-1:-1' nhaison/crete
 ```
 
 Note that the ```--ulimit``` option sets an unlimited stack size inside the container. This is to avoid stack overflow issues when running CRETE.
@@ -116,6 +116,8 @@ Now exit the container
 ```bash
 root@d62a2428405d:/home# exit
 ```
+
+#### Starting the Docker container and running CRETE
 
 Now enter the existing container
 ```bash
@@ -304,6 +306,30 @@ echo 'export LIBRARY_PATH=$LIBRARY_PATH:~/guest-build/bin'  >> ~/.bashrc
 echo 'export LD_BIND_NOW=1'  | sudo tee --append /etc/sysctl.conf
 ```
 
+### 3.6. Initiating CRETE and Saving a Snapshot
+On your guest OS, run 'crete-run' without any arguments:
+
+```bash
+$ crete-run
+```
+
+You should see:
+```xml 
+[CRETE] Waiting for port...
+```
+
+This indicates you have run _crete-run_ successfully and can proceed.
+.
+Save the snapshot under 'test' again.
+
+```bash
+ctrl+alt+2
+$ savevm test
+enter
+$ q
+enter
+```
+
 Now, the guest OS is all set for using CRETE.
 
 >### Tips for Using QEMU
@@ -362,7 +388,7 @@ prepared for CRETE. to utilize __echo__ from _GNU CoreUtils_ as the target
 binary under test.
 
 ### 4.1 Setting Up the Test on the Guest OS
-#### Provide a configuration file for the target binary
+#### Provide a Configuration File for the Target Binary
 First, boot the VM image using QEMU without kvm-enabled:
 ```bash
 $ qemu-system-x86_64 -hda crete.img -m 256 -k en-us
@@ -388,7 +414,7 @@ This is the path to the executable under testing.
 In this way, we will test the binary with one concolic argument
 with size of 8 bytes and its initial value is "abc".
 
-#### Start CRETE guest utility on the given setup
+#### Start CRETE Guest Utility on the Given Setup
 With the configuration file, we are ready to use _crete-qemu_ to start the test
 on the target binary.
 
@@ -436,39 +462,13 @@ To run CRETE in __Distributed__ mode, follow the steps in section __4.2__ below.
 >6. Save the snapshot fo the VM image as 'test'
 >7. Now you are ready to run ```crete-dispatch -c crete.dispatch.xml```, ```crete-vm-node -c crete.vm-node.xml``` (Run this command within vm-node folder), and ```crete-svm-node -c crete.svm-node.xml``` in seperate terminal windows
 
-#### Image location
+#### Image Location
 Make sure the image you created is under the correct directory. The path should look like this:
 ```xml 
 crete/crete-dev/image_template/vm-node/vm/1/crete.img 
 ```
 
-#### Initiating CRETE and saving snapshot 
-SKIP THIS SECTION IF YOU ARE INSTEAD USING THE CRETE DOCKER IMAGE
-
-On your guest OS, run 'crete-run' without any arguments:
-
-```bash
-$ crete-run
-```
-
-You should see:
-```xml 
-[CRETE] Waiting for port...
-```
-
-This indicates you have run _crete-run_ successfully and can proceed.
-.
-Save the snapshot under 'test' again.
-
-```bash
-ctrl+alt+2
-$ savevm test
-enter
-$ q
-enter
-```
-
-#### Ensuring QEMU is stopped
+#### Ensuring QEMU is Stopped
 
 Before starting CRETE, ensure that QEMU is not currently running. To check, open a different terminal window and run the following:
 
@@ -799,7 +799,7 @@ This section describes how many tests to run and how long to wait to terminate m
 </test>
 ```
 
-### Running Distributed Mode
+#### Running Distributed Mode
 
 There will be some minor differences in the markup
 
