@@ -1,6 +1,5 @@
 # CRETE User Guide
 
-
 [![Build Status](https://travis-ci.org/SVL-PSU/crete-dev.svg?branch=master)](https://travis-ci.org/SVL-PSU/crete-dev)
 
 # Table of Contents
@@ -14,7 +13,7 @@
 		* [Install Docker](#install-docker)
 		* [Pulling from Docker Hub](#pulling-from-docker-hub)
 		* [Creating a CRETE Docker container](#creating-a-crete-docker-container)
-	* [Building CRETE locally](#22-building-crete-locally)
+	* [Building CRETE Locally](#22-building-crete-locally)
 		* [Dependencies](#dependencies)
 		* [Building](#building)
 		* [Miscellaneous Setup](#miscellaneous-setup)
@@ -128,10 +127,10 @@ The container can be accessed through any terminal window:
 docker exec -it crete bash
 ```
 
-__Skip to section 4.2.3 for further instructions in running CRETE in Distributed mode. The rest of the manual until then details how to build CRETE on the host OS.__
+__Skip to section 4.2 for further instructions in running CRETE in Distributed mode. The rest of the manual until then details how to build CRETE on the host OS.__
 
 
-### 2.2 Building CRETE locally
+### 2.2 Building CRETE Locally
 
 #### Dependencies
 
@@ -444,7 +443,7 @@ crete/crete-dev/image_template/vm-node/vm/1/crete.img
 ```
 
 #### Initiating CRETE and saving snapshot 
-__SKIP THIS SECTION IF YOU ARE INSTEAD USING THE CRETE DOCKER IMAGE__
+SKIP THIS SECTION IF YOU ARE INSTEAD USING THE CRETE DOCKER IMAGE
 
 On your guest OS, run 'crete-run' without any arguments:
 
@@ -649,6 +648,8 @@ TBA
 
 ## 5. Configuration Options
 
+### Main Configuration
+
 Configuration is done within the guest OS via an XML file that is passed as an argument to _crete-run_.
 
 Example:
@@ -716,13 +717,9 @@ concolic:
 - Description: designate this argument to have test values generated for it.
 - Optional: yes - defaults to _false_.
 
-### crete-dispatch configuration
+### crete-dispatch Configuration
 
-As mentioned earlier, CRETE can be ran in two modes:
-- Developer
-- Distributed
-
-Below is a listing of the .xml files for both, respectively.
+#### Running Developer Mode
 
 ```xml
 <crete>
@@ -848,14 +845,11 @@ There will be some minor differences in the markup
 ```
 
 We need to specify the path to our image. Our image will be specifically found in 
-```xml
-/home/crete/image_template/vm-node/vm/1/crete.img
-```
 
 ```xml
 
 <image>
-        <path>nhaison-creteimg/img_template/vm-node/vm/1/crete.img</path>
+        <path>/home/crete/image_template/vm-node/vm/1/crete.img</path>
         <update>false</update>
 </image>
 ```
@@ -886,36 +880,32 @@ If we were to run multiple tests then we would have multiple items under the ite
 </items>
 ```
 
-### crete-vm-node configuration
+### crete-vm-node Configuration
 
 ```xml
 <crete>
     <vm>
-        <path>
-            <x86>
-                string
-            </x86>
-            <x64>
-                string
-            </x64>
-        </path>
         <count>1</count>
     </vm>
-    <translator>
-        <path>
-            <x86>
-                string
-            </x86>
-            <x64>
-                string
-            </x64>
-        </path>
-    </translator>
     <master>
         <ip>localhost</ip>
-        <port>uint</port>
+        <port>number</port>
     </master>
 </crete>
+```
+
+Set the IP address of the master as localhost
+
+```xml
+    <master>
+	<ip>localhost</ip>
+```
+
+Designate the port on which the vm will communicate
+
+```xml
+	<port>number</port>
+    </master>
 ```
 
 ### crete-svm-node configuration
@@ -924,15 +914,37 @@ If we were to run multiple tests then we would have multiple items under the ite
 <crete>
     <svm>
         <path>
-            <symbolic>string</symbolic>
+            <symbolic>/path/to/klee</symbolic>
         </path>
         <count>1</count>
     </svm>
     <master>
         <ip>localhost</ip>
-        <port>uint</port>
+        <port>number</port>
     </master>
 </crete>
+```
+
+Describes the path to KLEE for the svm to use
+
+```xml
+        <path>
+            <symbolic>/path/to/klee</symbolic>
+        </path>
+```
+
+Set the IP address of the master as localhost
+
+```xml
+    <master>
+	<ip>localhost</ip>
+```
+
+Designate the port on which the vm will communicate
+
+```xml
+	<port>number</port>
+    </master>
 ```
 
 ## 6. FAQ
