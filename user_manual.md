@@ -12,6 +12,7 @@
 * [Building CRETE](#2-building-crete)
 	* [Building CRETE with Docker](#21-building-crete-with-docker)
 		* [Install Docker](#install-docker)
+		* [Pulling from Docker Hub](#pulling-from-docker-hub)
 		* [Creating a CRETE Docker container](#creating-a-crete-docker-container)
 	* [Building CRETE locally](#22-building-crete-locally)
 		* [Dependencies](#dependencies)
@@ -26,7 +27,13 @@
 * [Generating Test Cases for Linux Binaries](#4-generating-test-cases-for-linux-binaries)
 	* [Setting Up the Test on the Guest OS](#41-setting-up-the-test-on-the-guest-os)
 	* [Running CRETE in Distributed Mode](#42-running-crete-in-distributed-mode)
+		* [Running crete-dispatch](#424-running-crete-dispatch)
+		* [Running crete-vm-node](#425-running-crete-vm-node)
+		* [Running crete-svm-node](#426-running-crete-svm-node)
 	* [Running CRETE in Developer Mode](#43-executing-crete-front-end-on-guest-os-and-back-end-on-the-host-os-developer-mode)
+		* [Running crete-dispatch](#431-running-crete-dispatch)
+		* [Running crete-vm-node](#432-running-crete-vm-node)
+		* [Running crete-svm-node](#433-running-crete-svm-node)
 	* [Collecting Results on the Host OS](#44-collecting-results-on-the-host-os)
 * [Configuration Options](#5-configuration-options)
 	* [Running Distributed Mode](#running-distributed-mode)
@@ -462,7 +469,20 @@ $ q
 enter
 ```
 
-#### 4.2.3 Running crete-dispatch
+#### 4.2.3 Ensuring QEMU is stopped
+
+Before starting CRETE, ensure that QEMU is not currently running. To check, open a different terminal window and run the following:
+
+```bash
+telnet localhost 1234
+$ q
+enter
+```
+
+If the telnet command fails, QEMU is not running in the first place. Otherwise, there should now be no QEMU processes running.
+
+#### 4.2.4 Running crete-dispatch
+
 In a separate terminal window in the container, locate crete.dispatch.xml. It should be found under:
 ```xml 
 /home/crete/image_template/crete.dispatch.xml
@@ -485,7 +505,7 @@ You should see:
 ```
 This indicates you ran _crete-dispatch_ successfully and can now run _crete-vm-node_.
 
-#### 4.2.4 Running crete-vm-node
+#### 4.2.5 Running crete-vm-node
 In a separate terminal window in the container, locate crete.vm-node.xml. It should be found under:
 ```xml 
 /home/crete/crete-dev/image_template/vm-node/crete.vm-node.xml 
@@ -505,7 +525,7 @@ entering: Start
 ```
 This indicates you ran _crete-vm-node_ successfully and can now run _crete-svm-node_.
 
-#### 4.2.5 Running crete-svm-node
+#### 4.2.6 Running crete-svm-node
 In a separate terminal window in the container, locate crete.svm-node.xml. It should be found under:
 ```xml
 /home/crete/crete-dev/image_template/crete.svm-node.xml
@@ -545,7 +565,7 @@ CRETE back-end has three parts to be run on the host OS: _crete-vm-node_ for man
 _crete-svm-node_ for managing symbolic VM instances, and _crete-dispatch_ for
 coordinating the whole process.
 
-#### Running crete-dispatch
+#### 4.3.1 Running crete-dispatch
 A sample configuration file, _crete.dispatch.xml_, for _crete-dispatch_ is:
 ```xml
 <crete>
@@ -585,7 +605,7 @@ $ crete-dispatch -c crete.dispatch.xml
 ```
 *More information about the markup can be found in section 5
 
-#### Running crete-vm-node
+#### 4.3.2 Running crete-vm-node
 A sample configuration file, _crete.vm-node.xml_, for _crete-vm-node_ is:
 ```xml
 <crete>
@@ -603,7 +623,7 @@ be started from the same folder where the _crete-qemu_ was started):
 ```bash
 $ crete-vm-node -c crete.vm-node.xml
 ```
-#### Running crete-svm-node
+#### 4.3.3 Running crete-svm-node
 A sample configuration file, _crete.svm-node.xml_, for _crete-svm-node_ is:
 ```xml
 <crete>
