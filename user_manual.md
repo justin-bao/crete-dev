@@ -73,7 +73,7 @@ have been tested.
 
 ## 2. Building CRETE
 
-You can build CRETE Distributed using Docker or manually from source code. For manual installation, please skip this section.
+You can build CRETE Distributed using Docker or manually from source code. For manual installation, please skip the following section and proceed to Building CRETE Locally.
 
 ### 2.1 Building CRETE with Docker
 
@@ -88,7 +88,7 @@ To utilize the CRETE Docker image, Docker must be installed on your machine. For
 
 #### Pulling from Docker Hub
 
-To pull down the latest build of a particular Docker image, run:
+To pull the latest build of a particular Docker image, run:
 
 ```bash
 docker pull nhaison/crete
@@ -109,9 +109,9 @@ Note that the ```--ulimit``` option sets an unlimited stack size inside the cont
 If this worked correctly, your shell prompt will have changed and you will be the root user. Verifying the user should yield the following output:
 
 ```bash
-root@d62a2428405d:/home# whoami
-root
-root@d62a2428405d:/home# 
+$ root@d62a2428405d:/home# whoami
+$ root
+$ root@d62a2428405d:/home# 
 ```
 
 Now exit the container
@@ -167,6 +167,8 @@ sudo apt-get install clang-3.4 llvm-3.4 llvm-3.4-dev llvm-3.4-tools
 > CRETE requires a C++11 compatible compiler.
 > We recommend clang++-3.4 or g++-4.9 or higher versions of these compilers.
 
+__Please keep in mind that for the rest of the documentation, referring to the 'crete' folder will assume that you have installed it within your /home folder. If not, we suggest you to do so or make sure you know your file path.__
+
 First, create the overall CRETE directory:
 ```bash
 mkdir crete
@@ -213,17 +215,17 @@ At this point, you're all set with building CRETE!
 ## 3. Preparing the Guest Operating System
 >#### Note
 > You may skip this section by using a prepared VM image
-  [crete-demo.img](http://svl13.cs.pdx.edu/crete-demo.img). This image has
+  [crete.img](http://svl15.cs.pdx.edu/image_template.tar.gz). The image can be accessed by decompressing ```image_template``` and navigatnig to ```image_template/vm-node/vm/1```. This image has
   Ubuntu-14.04.5-server-amd64 installed as the Guest OS along with all CRETE
   guest utilities.
 >
-> Root username: __test__
+> Root username: __crete__
 >
 > Password: __crete__
 
 The front-end of CRETE is an instrumented VM (crete-qemu). You need
 to setup a QEMU-compatible VM image to perform a certain test upon
-CRETE. To get the best performance, native QEMU with kvm enabled should be used for
+CRETE. To get the best performance, native QEMU with __kvm enabled__ should be used for
 all setups on the guest VM image. 
 
 Native qemu can be attained by compiling the source code provided on on the qemu website. In this user manual, native qemu commands will be signified with _native-qemu_ in place of _qemu_ to distinguish them from default qemu commands.
@@ -238,6 +240,8 @@ Where &lt;img-name&gt; is the desired name of your image, and &lt;img-size&gt;
 is the upper bound of how large the image can grow to in Gigabytes. See [this
 page](http://en.wikibooks.org/wiki/QEMU/Images#Creating_an_image) for more
 details.
+
+To follow this tutorial __effectively__, we suggest you name your image __crete.img__
 
 ### 3.2. Install the Guest OS
 
@@ -278,7 +282,7 @@ $ sudo apt-get install build-essential cmake libelf-dev libcap2-bin -y
 Compile CRETE utilties on the guest OS. Ensure that the symbolic links within the _lib_ folder are retained during the copying process by using "scp -r" or "cp -Lr".
 
 ```bash
-$ scp -r <host-user-name>@10.0.2.2:</path/to/crete/front-end/guest> .
+$ scp -r <host-user-name>@10.0.2.2:</home/crete/crete-dev/front-end/guest> .
 $ mkdir guest-build
 $ cd guest-build
 $ cmake ../guest
@@ -390,7 +394,7 @@ binaries. This manual will use "crete.img" as the VM image
 prepared for CRETE. to utilize __echo__ from _GNU CoreUtils_ as the target
 binary under test.
 
-### 4.1 Setting Up the Test on the Guest OS
+### 4.1. Setting Up the Test on the Guest OS
 #### Provide a Configuration File for the Target Binary
 First, boot the VM image using QEMU without kvm-enabled:
 ```bash
@@ -446,13 +450,13 @@ Developer mode allows us to run CRETE on __one__ specific program.
 
 Distributed mode allows us run CRETE on __multiple__ programs. 
 
-While running CRETE in distributed mode, the image will be booted up by the _vm-node_. When you run ```crete-vm-node -c crete.vm-node.xml```, the _vm-node_ will boot the image. 
+While running CRETE in Distributed Mode, the image will be booted up by the _vm-node_ when you run ```crete-vm-node -c crete.vm-node.xml```.
 
 While running CRETE in Developer mode, QEMU will exit after running CRETE. On the other hand, Distributed mode will restart QEMU every time it is finished running tests. 
 
 To run CRETE in __Distributed__ mode, follow the steps in section __4.2__ below. If you want to run __Developer__ mode, skip to section __4.3__.
 
-### 4.2 Running CRETE in Distributed Mode
+### 4.2. Running CRETE in Distributed Mode
 
 
 >#### General flow of setup for Distributed mode
@@ -485,9 +489,9 @@ If the telnet command fails, QEMU is not running in the first place. Otherwise, 
 
 #### Running crete-dispatch
 
-In a separate terminal window in the container, locate crete.dispatch.xml. It should be found under:
+In a separate terminal window accessing the container, locate crete.dispatch.xml. It should be found under:
 ```xml 
-/home/crete/image_template/crete.dispatch.xml
+/home/crete/crete-dev/image_template/crete.dispatch.xml
 ```
 
 Make sure the path node in crete.dispatch.xml:
@@ -498,6 +502,7 @@ matches the path to your crete.img
 
 Run 
 ```bash
+cd /home/crete/crete-dev/image_template
 crete-dispatch -c crete.dispatch.xml 
 ```
 
@@ -508,13 +513,14 @@ You should see:
 This indicates you ran _crete-dispatch_ successfully and can now run _crete-vm-node_.
 
 #### Running crete-vm-node
-In a separate terminal window in the container, locate crete.vm-node.xml. It should be found under:
+In a separate terminal window accessing the container, locate crete.vm-node.xml. It should be found under:
 ```xml 
 /home/crete/crete-dev/image_template/vm-node/crete.vm-node.xml 
 ```
 
 Run 
 ```bash
+cd /home/crete/crete-dev/image_template/vm-node/vm/1
 crete-vm-node -c crete.vm-node.xml 
 ```
 You should see:
@@ -528,7 +534,7 @@ entering: Start
 This indicates you ran _crete-vm-node_ successfully and can now run _crete-svm-node_.
 
 #### Running crete-svm-node
-In a separate terminal window in the container, locate crete.svm-node.xml. It should be found under:
+In a separate terminal window accessing the container, locate crete.svm-node.xml. It should be found under:
 ```xml
 /home/crete/crete-dev/image_template/crete.svm-node.xml
 ```
@@ -540,6 +546,7 @@ Make sure the path node matches the path to your crete-klee-1.4.0
 ```
 Run
 ```bash
+cd /home/crete/crete-dev/image_template
 crete-svm-node -c crete.svm-node.xml 
 ```
 
@@ -551,10 +558,12 @@ entering: Start
 ...
 ```
 
+CRETE will then run many test cases to test the selected executable. This may take a couple of minutes to finish.
+
 __You've successfully run CRETE in Distributed Mode!__
 
 
-### 4.3 Executing CRETE Front-end on Guest OS and Back-end on the Host OS (Developer Mode)
+### 4.3. Executing CRETE Front-end on Guest OS and Back-end on the Host OS (Developer Mode)
 
 On the guest OS, execute CRETE guest utility with the guest configuration file:
 ```bash
@@ -646,7 +655,7 @@ Start _crete-svm-node_ with the sample configuration file:
 $ crete-svm-node -c crete.svm-node.xml
 ```
 
-### 4.4 Collecting Results on the Host OS
+### 4.4. Collecting Results on the Host OS
 TBA
 
 ## 5. Configuration Options
@@ -850,7 +859,6 @@ There will be some minor differences in the markup
 We need to specify the path to our image. Our image will be specifically found in 
 
 ```xml
-
 <image>
         <path>/home/crete/image_template/vm-node/vm/1/crete.img</path>
         <update>false</update>
