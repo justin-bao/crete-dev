@@ -239,6 +239,16 @@ From within the guest OS, the configuration file for CRETE needs to be modified 
 
 must be modified to reflect the path to the new executable.
 
+You may also change the name of the configuration file to better reflect the executable. However, __do this with caution__ as changing the name of this file will require a modification to the 
+
+```xml
+        <items>
+            <item>/home/crete/name_of_configuration_file</item>
+        </items>
+```
+
+node in the ```crete.dispatch.xml``` file in the Docker container.
+
 ### Creating a New Snapshot
 
 Now that we have modified the guest OS, CRETE needs a new snapshot to run properly. The QEMU menu should be accessible through _ctrl+alt+2_ - however, if this doesn't work, run QEMU with the option:
